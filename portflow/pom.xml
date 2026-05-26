@@ -14,6 +14,8 @@
     <modules>
         <module>container-service</module>
         <module>eureka</module>
+        <module>api-gateway</module>
+        <module>terminal-service</module>
     </modules>
 
     <properties>
