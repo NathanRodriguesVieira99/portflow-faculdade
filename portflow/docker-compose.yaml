@@ -2,6 +2,7 @@ name: portflow
 
 volumes:
   portflow-postgres-data:
+  portflow-mongodb-data:
 
 services:
   postgreSQL:
@@ -21,3 +22,21 @@ services:
     volumes:
       - ./docker/postgres/init:/docker-entrypoint-initdb.d
       - portflow-postgres-data:/var/lib/postgresql/data
+
+  mongodb:
+     container_name: portflow-mongo
+     image: mongo:8
+     environment:
+         MONGO_INITDB_ROOT_USERNAME: portflow
+         MONGO_INITDB_ROOT_PASSWORD: portflow
+         MONGO_INITDB_DATABASE: terminal_service
+     ports:
+        - "27017:27017"  
+     healthcheck:
+        test: ["CMD", "mongosh", "--username","portflow", "--password", "portflow"]
+        interval: 5s
+        timeout: 5s
+        retries: 10     
+     volumes:
+        - ./docker/mongo/init:/docker-entrypoint-initdb.d
+        - portflow-mongodb-data:/data/db
