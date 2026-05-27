@@ -40,3 +40,9 @@ services:
      volumes:
         - ./docker/mongo/init:/docker-entrypoint-initdb.d
         - portflow-mongodb-data:/data/db
+
+  terminal-service:
+        image: terminal-service
+        container_name: terminal-service
+        ports:  
+           - "8082:8082"  
