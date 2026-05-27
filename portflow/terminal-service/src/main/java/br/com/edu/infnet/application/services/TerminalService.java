@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class TerminalService {
+
   private final TerminalRepository terminalRepository;
 
   public List<Terminal> findAll() {
