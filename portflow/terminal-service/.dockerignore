@@ -2,4 +2,4 @@
 !src/
 !pom.xml
 !docker/
-target/
+!target/*.jar
