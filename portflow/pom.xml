@@ -87,5 +87,6 @@
 
             </plugins>
         </pluginManagement>
+        
     </build>
 </project>
