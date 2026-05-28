@@ -5,7 +5,7 @@ volumes:
   portflow-mongodb-data:
 
 services:
-  postgreSQL:
+  postgresql:
     container_name: portflow-pg
     image: postgres:18.3-alpine
     environment:
@@ -20,7 +20,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+      - ./postgres/init:/docker-entrypoint-initdb.d
       - portflow-postgres-data:/var/lib/postgresql/data
 
   mongodb:
@@ -38,11 +38,41 @@ services:
         timeout: 5s
         retries: 10     
      volumes:
-        - ./docker/mongo/init:/docker-entrypoint-initdb.d
+        - ./mongo/init:/docker-entrypoint-initdb.d
         - portflow-mongodb-data:/data/db
 
   terminal-service:
-        image: terminal-service
+        image: terminal-service:latest
         container_name: terminal-service
+        build:
+          context: ../terminal-service
+          dockerfile: docker/Dockerfile
         ports:  
            - "8082:8082"  
+
+  container-service:
+        image: container-service:latest
+        container_name: container-service
+        build:
+          context: ../container-service
+          dockerfile: docker/Dockerfile
+        ports:
+           - "8081:8081"
+
+  eureka-server:
+        image: eureka-server:latest
+        container_name: eureka
+        build:
+          context: ../eureka
+          dockerfile: docker/Dockerfile
+        ports:
+           - "8761:8761"    
+
+  api-gateway:
+        image: api-gateway:latest
+        container_name: api-gateway
+        build:
+          context: ../api-gateway
+          dockerfile: docker/Dockerfile
+        ports:
+           - "9999:9999"      
