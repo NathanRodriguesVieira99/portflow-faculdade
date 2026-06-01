@@ -11,7 +11,7 @@ spring:
               predicates:
                 - Path=/api/containers/**
               filters:
-                - StripPrefix=1
+                - StripPrefix=2
 
 server:
   port: 9999
