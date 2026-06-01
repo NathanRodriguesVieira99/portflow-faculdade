@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service;
 
 import br.com.edu.infnet.domain.enums.StatusContainer;
 import br.com.edu.infnet.domain.models.PortContainer;
+import br.com.edu.infnet.infrastructure.clients.TerminalClient;
 import br.com.edu.infnet.infrastructure.repositories.PortContainerRepository;
 import br.com.edu.infnet.presentation.dtos.ContainerArrivalRequest;
+import br.com.edu.infnet.presentation.dtos.TerminalValidationResponse;
+import br.com.edu.infnet.shared.exceptions.TerminalValidationException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ContainerService {
   private final PortContainerRepository repo;
+  private final TerminalClient feing;
 
   public PortContainer registerArrival(ContainerArrivalRequest request) {
     PortContainer container = new PortContainer(
@@ -27,6 +31,12 @@ public class ContainerService {
         request.cargoType(),
         StatusContainer.CHEGOU,
         LocalDateTime.now());
+
+    TerminalValidationResponse validation = feing.validarTerminal(request.terminalId(), request.cargoType());
+
+    if (!validation.terminalValido()) {
+      throw new TerminalValidationException(validation.mensagem());
+    }
 
     return repo.save(container);
   }
