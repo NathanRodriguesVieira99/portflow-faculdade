@@ -30,7 +30,7 @@ public class ContainerService {
         request.originCountry(),
         request.destinationCountry(),
         request.cargoType(),
-        StatusContainer.CHEGOU,
+        StatusContainer.DOCUMENTACAO_PENDENTE,
         LocalDateTime.now());
 
     TerminalValidationResponse validation = terminalService.validarTerminal(request.terminalId(), request.cargoType());
