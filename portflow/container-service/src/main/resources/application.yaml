@@ -17,6 +17,12 @@ spring:
         "[format_sql]": true
       show-sql: true
 
+  kafka:
+    bootstrap-servers: kafka:29092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
 eureka:
   client:
     service-url:
@@ -36,3 +42,22 @@ server:
 api:
   endpoints:
     terminal: TERMINAL-SERVICE
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      terminalValidation:
+        slidingWindowSize: 4
+        minimumNumberOfCalls: 4
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
+  retry:
+    instances:
+      terminalValidation:
+        maxAttempts: 3
+        waitDuration: 500ms
+        retryExceptions:
+          - feign.FeignException
+          - java.net.ConnectException
+          - java.net.SocketTimeoutException
