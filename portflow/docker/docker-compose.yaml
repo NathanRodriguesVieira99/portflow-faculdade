@@ -95,6 +95,13 @@ services:
           dockerfile: docker/Dockerfile
         ports:  
            - "8082:8082"  
+        depends_on:
+          eureka-server:
+            condition: service_healthy
+          postgresql:
+              condition: service_healthy 
+          kafka:
+             condition: service_healthy  
 
   container-service:
         image: container-service:latest
@@ -104,6 +111,13 @@ services:
           dockerfile: docker/Dockerfile
         ports:
            - "8081:8081"
+        depends_on:
+          eureka-server:
+            condition: service_healthy
+          postgresql:
+            condition: service_healthy
+          kafka:
+            condition: service_healthy
 
   eureka-server:
         image: eureka-server:latest
@@ -111,6 +125,11 @@ services:
         build:
           context: ../eureka
           dockerfile: docker/Dockerfile
+        healthcheck:
+          test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+          interval: 10s
+          timeout: 10s
+          retries: 4
         ports:
            - "8761:8761"    
 
@@ -122,3 +141,6 @@ services:
           dockerfile: docker/Dockerfile
         ports:
            - "9999:9999"      
+        depends_on:
+          eureka-server:
+            condition: service_healthy
