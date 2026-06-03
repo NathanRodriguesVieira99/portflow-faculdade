@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class KafkaService {
+public class KafkaProducer {
   private final KafkaTemplate<String, ContainerStatusEvent> kafka;
 
   private void sendEvent(ContainerStatusEvent event) {

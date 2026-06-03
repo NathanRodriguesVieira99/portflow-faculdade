@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.edu.infnet.domain.enums.StatusContainer;
 import br.com.edu.infnet.domain.models.PortContainer;
-import br.com.edu.infnet.infrastructure.kafka.KafkaService;
+import br.com.edu.infnet.infrastructure.kafka.KafkaProducer;
 import br.com.edu.infnet.infrastructure.repositories.PortContainerRepository;
 import br.com.edu.infnet.presentation.dtos.ContainerArrivalRequest;
 import br.com.edu.infnet.presentation.dtos.TerminalValidationResponse;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class ContainerService {
   private final PortContainerRepository repo;
   private final TerminalService terminalService;
-  private final KafkaService kafka;
+  private final KafkaProducer kafka;
 
   public PortContainer registerArrival(ContainerArrivalRequest request) {
     PortContainer container = new PortContainer(
