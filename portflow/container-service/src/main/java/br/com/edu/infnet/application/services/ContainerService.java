@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.edu.infnet.domain.enums.StatusContainer;
 import br.com.edu.infnet.domain.models.PortContainer;
-import br.com.edu.infnet.infrastructure.clients.TerminalClient;
+import br.com.edu.infnet.infrastructure.kafka.KafkaService;
 import br.com.edu.infnet.infrastructure.repositories.PortContainerRepository;
 import br.com.edu.infnet.presentation.dtos.ContainerArrivalRequest;
 import br.com.edu.infnet.presentation.dtos.TerminalValidationResponse;
@@ -19,7 +19,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ContainerService {
   private final PortContainerRepository repo;
-  private final TerminalClient feing;
+  private final TerminalService terminalService;
+  private final KafkaService kafka;
 
   public PortContainer registerArrival(ContainerArrivalRequest request) {
     PortContainer container = new PortContainer(
@@ -32,13 +33,17 @@ public class ContainerService {
         StatusContainer.CHEGOU,
         LocalDateTime.now());
 
-    TerminalValidationResponse validation = feing.validarTerminal(request.terminalId(), request.cargoType());
+    TerminalValidationResponse validation = terminalService.validarTerminal(request.terminalId(), request.cargoType());
 
     if (!validation.terminalValido()) {
       throw new TerminalValidationException(validation.mensagem());
     }
 
-    return repo.save(container);
+    PortContainer savedContainer = repo.save(container);
+
+    kafka.sendDocumentacaoPendente(savedContainer.getId());
+
+    return savedContainer;
   }
 
   public List<PortContainer> findAll() {
